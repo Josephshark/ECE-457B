@@ -140,9 +140,11 @@ class Perceptron:
         To get the position statistically we the average value as the mean and the difference between
         the lowest value (or highest value) and the mean as 3 times the std.  
         """
-        mean_specified_weight = (0.25 + 0.125)/2
-        std_of_weights = 3*(mean_specified_weight - 0.125)**(1/2)
-        self.w_ = rgen.normal(loc=mean_specified_weight, scale=std_of_weights, size=X.shape[1])
+        #mean_specified_weight = (0.25 + 0.125)/2
+        #std_of_weights = 3*(mean_specified_weight - 0.125)**(1/2)
+        #self.w_ = rgen.normal(loc=mean_specified_weight, scale=std_of_weights, size=X.shape[1])
+        self.w_ = np.array([0.25, -0.125])
+
         self.b_ = np.float64(0.)
         
         self.errors_ = []
@@ -298,7 +300,8 @@ plt.show()
 # ...
 
 # ## Minimizing cost functions with gradient descent
-
+'''
+'''
 # And Data
 # Inputs (features)
 X = [
@@ -313,7 +316,7 @@ X = np.array(X)
 y = [0, 0, 0, 1]
 y = np.array(y)
 
-andlearner = Perceptron(0.1,12,1)
+andlearner = Perceptron(0.1,10,1)
 andlearner.fit(X,y)
 plot_decision_regions(X,y, classifier=andlearner)
 
@@ -332,10 +335,7 @@ plt.ylabel('Number of updates')
 
 # plt.savefig('images/02_07.png', dpi=300)
 plt.show()
-print("w: ")
-print(andlearner.w_)
-print("b: ")
-print(andlearner.b_)
+print("w: ["+str(andlearner.w_[0])+", "+str(andlearner.w_[0])+"], b:"+str(andlearner.b_)+".")
 '''
 '''
 # Inputs (features)
@@ -367,15 +367,13 @@ plt.show()
 plt.plot(range(1, len(orlearner.errors_) + 1), orlearner.errors_, marker='o')
 plt.xlabel('Epochs')
 plt.ylabel('Number of updates')
+plt.show()
 
 # plt.savefig('images/02_07.png', dpi=300)
-plt.show()
-print("w: ")
-print(orlearner.w_)
-print("b: ")
-print(orlearner.b_)'''
+print("w: ["+str(orlearner.w_[0])+", "+str(orlearner.w_[0])+"], b:"+str(orlearner.b_)+".")
 
 
+'''
 # Inputs (features)
 X = [
   [0, 0],
@@ -408,7 +406,4 @@ plt.ylabel('Number of updates')
 
 # plt.savefig('images/02_07.png', dpi=300)
 plt.show()
-print("w: ")
-print(implieslearner.w_)
-print("b: ")
-print(implieslearner.b_)
+print("w: ["+str(implieslearner.w_[0])+", "+str(implieslearner.w_[0])+"], b:"+str(implieslearner.b_)+".")
