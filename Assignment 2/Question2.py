@@ -143,7 +143,7 @@ class Perceptron:
         #mean_specified_weight = (0.25 + 0.125)/2
         #std_of_weights = 3*(mean_specified_weight - 0.125)**(1/2)
         #self.w_ = rgen.normal(loc=mean_specified_weight, scale=std_of_weights, size=X.shape[1])
-        self.w_ = np.array([0.25, -0.125])
+        self.w_ = np.array([0.25, -0.125, 0.0625])
 
         self.b_ = np.float64(0.)
         
@@ -301,109 +301,33 @@ plt.show()
 
 # ## Minimizing cost functions with gradient descent
 '''
-'''
 # And Data
 # Inputs (features)
-X = [
-  [0, 0],
-  [0, 1],
-  [1, 0],
-  [1, 1]
-]
-X = np.array(X)
+data = np.loadtxt('Assignment 2/rectangle.data', delimiter=',')  # load CSV-style data
+X = data[:, :3]   # first 3 columns → features
+y = data[:, 3]    # last column → labels
 
-# Labels (targets)
-y = [0, 0, 0, 1]
-y = np.array(y)
+X_60 = X[:60]
+y_60 = y[:60]
 
-andlearner = Perceptron(0.1,10,1)
-andlearner.fit(X,y)
-plot_decision_regions(X,y, classifier=andlearner)
+X_remaining = X[60:]
+y_remaining = y[60:]
 
-plt.xlabel('X')
-plt.ylabel('Output')
-plt.legend(loc='upper left')
+X_groups = np.array_split(X_remaining, 8)
+y_groups = np.array_split(y_remaining, 8)
+
+rectLearner = Perceptron(0.1,10,1)
+rectLearner.fit(X_60,y_60)
 
 
-#plt.savefig('images/02_08.png', dpi=300)
-plt.show()
-
-
-plt.plot(range(1, len(andlearner.errors_) + 1), andlearner.errors_, marker='o')
+plt.plot(range(1, len(rectLearner.errors_) + 1), rectLearner.errors_, marker='o')
 plt.xlabel('Epochs')
 plt.ylabel('Number of updates')
 
 # plt.savefig('images/02_07.png', dpi=300)
 plt.show()
-print("w: ["+str(andlearner.w_[0])+", "+str(andlearner.w_[0])+"], b:"+str(andlearner.b_)+".")
-'''
-'''
-# Inputs (features)
-X = [
-  [0, 0],
-  [0, 1],
-  [1, 0],
-  [1, 1]
-]
-X = np.array(X)
+print("w: ["+str(rectLearner.w_[0])+", "+str(rectLearner.w_[1])+", "+str(rectLearner.w_[2])+"], b: "+str(rectLearner.b_)+".")
 
-# Labels (targets)
-y = [0, 1, 1, 1]
-y = np.array(y)
+for X_i, y_i in zip(X_groups, y_groups):
+  print(np.sum(rectLearner.predict(X_i) == y_i))
 
-orlearner = Perceptron(0.1,10,1)
-orlearner.fit(X,y)
-plot_decision_regions(X,y, classifier=orlearner)
-
-plt.xlabel('X')
-plt.ylabel('Output')
-plt.legend(loc='upper left')
-
-
-#plt.savefig('images/02_08.png', dpi=300)
-plt.show()
-
-
-plt.plot(range(1, len(orlearner.errors_) + 1), orlearner.errors_, marker='o')
-plt.xlabel('Epochs')
-plt.ylabel('Number of updates')
-plt.show()
-
-# plt.savefig('images/02_07.png', dpi=300)
-print("w: ["+str(orlearner.w_[0])+", "+str(orlearner.w_[0])+"], b:"+str(orlearner.b_)+".")
-
-
-'''
-# Inputs (features)
-X = [
-  [0, 0],
-  [0, 1],
-  [1, 0],
-  [1, 1]
-]
-X = np.array(X)
-
-# Labels (targets)
-y = [1, 1, 0, 1]
-y = np.array(y)
-
-implieslearner = Perceptron(0.1,20,5)
-implieslearner.fit(X,y)
-plot_decision_regions(X,y, classifier=implieslearner)
-
-plt.xlabel('X')
-plt.ylabel('Output')
-plt.legend(loc='upper left')
-
-
-#plt.savefig('images/02_08.png', dpi=300)
-plt.show()
-
-
-plt.plot(range(1, len(implieslearner.errors_) + 1), implieslearner.errors_, marker='o')
-plt.xlabel('Epochs')
-plt.ylabel('Number of updates')
-
-# plt.savefig('images/02_07.png', dpi=300)
-plt.show()
-print("w: ["+str(implieslearner.w_[0])+", "+str(implieslearner.w_[0])+"], b:"+str(implieslearner.b_)+".")

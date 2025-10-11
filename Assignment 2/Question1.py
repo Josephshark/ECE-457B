@@ -301,7 +301,7 @@ plt.show()
 
 # ## Minimizing cost functions with gradient descent
 '''
-'''
+
 # And Data
 # Inputs (features)
 X = [
@@ -335,8 +335,8 @@ plt.ylabel('Number of updates')
 
 # plt.savefig('images/02_07.png', dpi=300)
 plt.show()
-print("w: ["+str(andlearner.w_[0])+", "+str(andlearner.w_[0])+"], b:"+str(andlearner.b_)+".")
-'''
+print("w: ["+str(andlearner.w_[0])+", "+str(andlearner.w_[1])+"], b: "+str(andlearner.b_)+".")
+
 '''
 # Inputs (features)
 X = [
@@ -370,9 +370,9 @@ plt.ylabel('Number of updates')
 plt.show()
 
 # plt.savefig('images/02_07.png', dpi=300)
-print("w: ["+str(orlearner.w_[0])+", "+str(orlearner.w_[0])+"], b:"+str(orlearner.b_)+".")
+print("w: ["+str(orlearner.w_[0])+", "+str(orlearner.w_[1])+"], b: "+str(orlearner.b_)+".")
 
-
+'''
 '''
 # Inputs (features)
 X = [
@@ -406,4 +406,5 @@ plt.ylabel('Number of updates')
 
 # plt.savefig('images/02_07.png', dpi=300)
 plt.show()
-print("w: ["+str(implieslearner.w_[0])+", "+str(implieslearner.w_[0])+"], b:"+str(implieslearner.b_)+".")
+print("w: ["+str(implieslearner.w_[0])+", "+str(implieslearner.w_[1])+"], b: "+str(implieslearner.b_)+".")
+'''

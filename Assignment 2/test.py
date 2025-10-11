@@ -1,4 +1,13 @@
 import numpy as np
+import os
+
+data = np.loadtxt('Assignment 2/rectangle.data', delimiter=',')  # load CSV-style data
+X = data[:, :3]   # first 3 columns → features
+y = data[:, 3]    # last column → labels
+
+print("X:\n", X)
+print("y:\n", y)
+'''
 
 X = [
   [0, 0],
@@ -27,3 +36,5 @@ y = [2, 12]
 y = np.array(y)
 
 print(y.shape)
+D:\school\coop\Battery Coop\repository\ECE-457B\Assignment 2\test.py
+'''
