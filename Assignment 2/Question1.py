@@ -2,7 +2,7 @@
 
 
 import sys
-from python_environment_check import check_packages
+#from python_environment_check import check_packages
 import numpy as np
 import os
 import pandas as pd
@@ -25,7 +25,7 @@ sys.path.insert(0, '..')
 
 
 
-
+'''
 
 d = {
     'numpy': '1.21.2',
@@ -33,7 +33,7 @@ d = {
     'pandas': '1.3.2'
 }
 check_packages(d)
-
+'''
 
 # # Chapter 2 - Training Machine Learning Algorithms for Classification
 
@@ -134,8 +134,16 @@ class Perceptron:
 
         """
         rgen = np.random.RandomState(self.random_state)
-        self.w_ = rgen.normal(loc=0.0, scale=0.01, size=X.shape[1])
-        self.b_ = np.float_(0.)
+        """
+        The weights were specified to need to be between [0.25 − 0.125],
+        
+        To get the position statistically we the average value as the mean and the difference between
+        the lowest value (or highest value) and the mean as 3 times the std.  
+        """
+        mean_specified_weight = (0.25 + 0.125)/2
+        std_of_weights = 3*(mean_specified_weight - 0.125)**(1/2)
+        self.w_ = rgen.normal(loc=mean_specified_weight, scale=std_of_weights, size=X.shape[1])
+        self.b_ = np.float64(0.)
         
         self.errors_ = []
 
@@ -157,7 +165,7 @@ class Perceptron:
         """Return class label after unit step"""
         return np.where(self.net_input(X) >= 0.0, 1, 0)
 
-
+'''
 
 
 v1 = np.array([1, 2, 3])
@@ -182,7 +190,7 @@ try:
                      header=None,
                      encoding='utf-8')
     
-except HTTPError:
+except Exception:
     s = 'iris.data'
     print('From local Iris path:', s)
     df = pd.read_csv(s,
@@ -234,7 +242,7 @@ plt.ylabel('Number of updates')
 
 # plt.savefig('images/02_07.png', dpi=300)
 plt.show()
-
+'''
 
 
 # ### A function for plotting decision regions
@@ -272,7 +280,7 @@ def plot_decision_regions(X, y, classifier, resolution=0.02):
                     edgecolor='black')
 
 
-
+'''
 
 plot_decision_regions(X, y, classifier=ppn)
 plt.xlabel('Sepal length [cm]')
@@ -291,10 +299,116 @@ plt.show()
 
 # ## Minimizing cost functions with gradient descent
 
+# And Data
+# Inputs (features)
+X = [
+  [0, 0],
+  [0, 1],
+  [1, 0],
+  [1, 1]
+]
+X = np.array(X)
+
+# Labels (targets)
+y = [0, 0, 0, 1]
+y = np.array(y)
+
+andlearner = Perceptron(0.1,12,1)
+andlearner.fit(X,y)
+plot_decision_regions(X,y, classifier=andlearner)
+
+plt.xlabel('X')
+plt.ylabel('Output')
+plt.legend(loc='upper left')
 
 
+#plt.savefig('images/02_08.png', dpi=300)
+plt.show()
 
 
+plt.plot(range(1, len(andlearner.errors_) + 1), andlearner.errors_, marker='o')
+plt.xlabel('Epochs')
+plt.ylabel('Number of updates')
+
+# plt.savefig('images/02_07.png', dpi=300)
+plt.show()
+print("w: ")
+print(andlearner.w_)
+print("b: ")
+print(andlearner.b_)
+'''
+'''
+# Inputs (features)
+X = [
+  [0, 0],
+  [0, 1],
+  [1, 0],
+  [1, 1]
+]
+X = np.array(X)
+
+# Labels (targets)
+y = [0, 1, 1, 1]
+y = np.array(y)
+
+orlearner = Perceptron(0.1,10,1)
+orlearner.fit(X,y)
+plot_decision_regions(X,y, classifier=orlearner)
+
+plt.xlabel('X')
+plt.ylabel('Output')
+plt.legend(loc='upper left')
 
 
+#plt.savefig('images/02_08.png', dpi=300)
+plt.show()
 
+
+plt.plot(range(1, len(orlearner.errors_) + 1), orlearner.errors_, marker='o')
+plt.xlabel('Epochs')
+plt.ylabel('Number of updates')
+
+# plt.savefig('images/02_07.png', dpi=300)
+plt.show()
+print("w: ")
+print(orlearner.w_)
+print("b: ")
+print(orlearner.b_)'''
+
+
+# Inputs (features)
+X = [
+  [0, 0],
+  [0, 1],
+  [1, 0],
+  [1, 1]
+]
+X = np.array(X)
+
+# Labels (targets)
+y = [1, 1, 0, 1]
+y = np.array(y)
+
+implieslearner = Perceptron(0.1,20,5)
+implieslearner.fit(X,y)
+plot_decision_regions(X,y, classifier=implieslearner)
+
+plt.xlabel('X')
+plt.ylabel('Output')
+plt.legend(loc='upper left')
+
+
+#plt.savefig('images/02_08.png', dpi=300)
+plt.show()
+
+
+plt.plot(range(1, len(implieslearner.errors_) + 1), implieslearner.errors_, marker='o')
+plt.xlabel('Epochs')
+plt.ylabel('Number of updates')
+
+# plt.savefig('images/02_07.png', dpi=300)
+plt.show()
+print("w: ")
+print(implieslearner.w_)
+print("b: ")
+print(implieslearner.b_)
