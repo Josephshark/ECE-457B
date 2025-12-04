@@ -276,51 +276,82 @@ class kNN:
 
 class NeuralNet:
     def __init__(self):
-        pass
-    def fit(self, X, y):
+        """ Initialize weights and biases """
+        self.hidden_weights = np.random.rand(2, 2)
+        self.hidden_bias = np.random.rand(2)
 
+        self.output_weights = np.random.rand(self.hidden_weights.shape[1], 1)
+        self.output_bias = np.random.rand(1)
+        self.learning_rate = 1
+        self.num_epochs = 1
         
-        pass
+    def fit(self, X, y):
+        """ Train the neural network using backpropagation """
+        # Feature scaling
+        X = (X - np.min(X, axis=0)) / (np.max(X, axis=0) - np.min(X, axis=0))
+
+        for epoch in range(self.num_epochs):
+            for i in range(X.shape[0]):
+                # Initialize etas
+                delta_hidden_weights = np.zeros(self.hidden_weights.shape)
+                delta_hidden_bias = np.zeros(self.hidden_bias.shape)
+
+                delta_output_weights = np.zeros(self.output_weights.shape)
+                delta_output_bias = np.zeros(self.output_bias.shape)
+
+                # Forward pass
+                hidden_layer_input = np.dot(X[i], self.hidden_weights) + self.hidden_bias
+                hidden_layer_output = self.sigmoid(hidden_layer_input)
+
+                output_layer_input = np.dot(hidden_layer_output, self.output_weights) + self.output_bias
+                output = self.sigmoid(output_layer_input)
+
+                # Backward pass
+                output_error = output - y[i]
+                output_delta = output_error * self.sigmoid_derivative(output)
+
+                hidden_error = output_delta.dot(self.output_weights.T)
+                hidden_delta = hidden_error * self.sigmoid_derivative(hidden_layer_output)
+
+                # Accumulate gradients
+                delta_output_weights += np.outer(hidden_layer_output, output_delta)
+                delta_output_bias += output_delta
+
+                delta_hidden_weights += np.outer(X[i], hidden_delta)
+                delta_hidden_bias += hidden_delta
+                # Update weights and biases
+                self.output_weights -= self.learning_rate * delta_output_weights
+                self.output_bias -= self.learning_rate * delta_output_bias
+                self.hidden_weights -= self.learning_rate * delta_hidden_weights
+                self.hidden_bias -= self.learning_rate * delta_hidden_bias
+
+    def sigmoid(self, x):
+        return 1 / (1 + np.exp(-x))
+    
+    def sigmoid_derivative(self, x):
+        return x * (1 - x)
+                
+
     def predict(self, X, y=None):
-        pass
-
-
-x, y = getsamples()
-
-
-
-testTree = {
-    "root":{
-        "decision":{
-            "feature":0,
-            "threshold":0.5
-        },
-        "gini":0.5,
-        "samples":200,
-        "value":[1,2],
-        "right":{
-            "decision":{
-                "feature":1,
-                "threshold":1.5
-            },
-            "gini":0.0,
-            "samples":200,
-            "value":[3,4],
-        },
-        "left":{
-            "decision":{
-                "feature":1,
-                "threshold":1.5
-            },
-            "gini":0.0,
-            "samples":200,
-            "value":[5,6],
-        }
-    }
-}
+        y_pred = np.array([])
+        for i in range(X.shape[0]):
+            # Forward pass
+            hidden_layer_input = np.dot(X[i], self.hidden_weights) + self.hidden_bias
+            hidden_layer_output = self.sigmoid(hidden_layer_input)
+            output_layer_input = np.dot(hidden_layer_output, self.output_weights) + self.output_bias
+            output = self.sigmoid(output_layer_input)
+            y_pred = np.append(y_pred, 1 if output >= 0.5 else 0)
+        if y is not None:
+            accuracy = np.sum(y_pred.astype(int) == y.astype(int)) / y.shape[0]
+            print(f"Neural Network Accuracy: {accuracy*100:.2f}%")
+        return y_pred.astype(int)
+        
 
 x = np.array([[0.1, 0.2], [0.3, 0.4],[0.5,0.4],[0.5, 0.6], [0.7, 0.8]])
 y = np.array([1, 0,1,0,1])
+x, y = getsamples()
+
+
 """
 This works to fit and predict using the decision tree
 tree = DecTree()
@@ -335,3 +366,7 @@ knn = kNN()
 knn.fit(x, y)
 knn.predict(x,y)"""
 
+net = NeuralNet()
+
+net.fit(x, y)
+print(net.predict(x,y))
