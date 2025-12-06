@@ -8,6 +8,8 @@ import numpy as np
 
 import matplotlib.pyplot as plt
 
+import helper
+
 
 class DecTree:
     def __init__(self):
@@ -213,7 +215,7 @@ class DecTree:
         x1min, x1max = x[:,0].min() - 1, x[:,0].max() + 1
         x2min, x2max = x[:,1].min() - 1, x[:,1].max() + 1
         grid = np.mgrid[x1min:x1max:step_size, x2min:x2max:step_size].reshape(2, -1).T
-        grid_pred = tree.predict(grid)
+        grid_pred = self.decision_tree.predict(grid)
         for i in range(len(grid)):
             if grid_pred[i] == 0:
                 plt.scatter(grid[i,0], grid[i,1], color='red')
@@ -277,74 +279,76 @@ class kNN:
 class NeuralNet:
     def __init__(self):
         """ Initialize weights and biases """
-        self.hidden_weights = np.random.rand(2, 2)
-        self.hidden_bias = np.random.rand(2)
-
-        self.output_weights = np.random.rand(self.hidden_weights.shape[1], 1)
-        self.output_bias = np.random.rand(1)
         self.learning_rate = 1
-        self.num_epochs = 1
-        
+        self.num_epochs = 100  
+
     def fit(self, X, y):
         """ Train the neural network using backpropagation """
-        # Feature scaling
-        X = (X - np.min(X, axis=0)) / (np.max(X, axis=0) - np.min(X, axis=0))
+        self.hidden_weight = 1
+        self.train(X, y)
+        accuracy_pos_w = self.accuracy(X, y)
+        self.hidden_weight = -1
+        self.train(X, y)
+        accuracy_neg_w = self.accuracy(X, y)
 
+        if accuracy_pos_w > accuracy_neg_w:
+            self.hidden_weight = 1
+        else:
+            self.hidden_weight = -1
+
+    def train(self, X, y):
+        np.random.seed(1)
+        self.hidden_bias = np.random.rand(1)*10
         for epoch in range(self.num_epochs):
             for i in range(X.shape[0]):
-                # Initialize etas
-                delta_hidden_weights = np.zeros(self.hidden_weights.shape)
-                delta_hidden_bias = np.zeros(self.hidden_bias.shape)
-
-                delta_output_weights = np.zeros(self.output_weights.shape)
-                delta_output_bias = np.zeros(self.output_bias.shape)
 
                 # Forward pass
-                hidden_layer_input = np.dot(X[i], self.hidden_weights) + self.hidden_bias
-                hidden_layer_output = self.sigmoid(hidden_layer_input)
+                activated_x = X[i][0]*X[i][1]*self.hidden_weight
 
-                output_layer_input = np.dot(hidden_layer_output, self.output_weights) + self.output_bias
-                output = self.sigmoid(output_layer_input)
+                if activated_x > self.hidden_bias:
+                    output = 1
+                else:   
+                    output = 0
+
+                actual = y[i]
+                error_exists_and_direction = -(actual - output)
 
                 # Backward pass
-                output_error = output - y[i]
-                output_delta = output_error * self.sigmoid_derivative(output)
-
-                hidden_error = output_delta.dot(self.output_weights.T)
-                hidden_delta = hidden_error * self.sigmoid_derivative(hidden_layer_output)
-
-                # Accumulate gradients
-                delta_output_weights += np.outer(hidden_layer_output, output_delta)
-                delta_output_bias += output_delta
-
-                delta_hidden_weights += np.outer(X[i], hidden_delta)
-                delta_hidden_bias += hidden_delta
-                # Update weights and biases
-                self.output_weights -= self.learning_rate * delta_output_weights
-                self.output_bias -= self.learning_rate * delta_output_bias
-                self.hidden_weights -= self.learning_rate * delta_hidden_weights
-                self.hidden_bias -= self.learning_rate * delta_hidden_bias
-
-    def sigmoid(self, x):
-        return 1 / (1 + np.exp(-x))
-    
-    def sigmoid_derivative(self, x):
-        return x * (1 - x)
-                
+                error = error_exists_and_direction*abs(self.hidden_bias - activated_x)
+                self.hidden_bias+= error*self.learning_rate
 
     def predict(self, X, y=None):
         y_pred = np.array([])
         for i in range(X.shape[0]):
             # Forward pass
-            hidden_layer_input = np.dot(X[i], self.hidden_weights) + self.hidden_bias
-            hidden_layer_output = self.sigmoid(hidden_layer_input)
-            output_layer_input = np.dot(hidden_layer_output, self.output_weights) + self.output_bias
-            output = self.sigmoid(output_layer_input)
-            y_pred = np.append(y_pred, 1 if output >= 0.5 else 0)
+            # Forward pass
+            activated_x = X[i][0]*X[i][1]*self.hidden_weight
+
+            if activated_x > self.hidden_bias:
+                output = 1
+            else:   
+                output = 0
+            y_pred = np.append(y_pred, output)
         if y is not None:
             accuracy = np.sum(y_pred.astype(int) == y.astype(int)) / y.shape[0]
             print(f"Neural Network Accuracy: {accuracy*100:.2f}%")
         return y_pred.astype(int)
+    
+    def accuracy(self, X, y):
+        y_pred = np.array([])
+        for i in range(X.shape[0]):
+            # Forward pass
+            # Forward pass
+            activated_x = X[i][0]*X[i][1]*self.hidden_weight
+
+            if activated_x > self.hidden_bias:
+                output = 1
+            else:   
+                output = 0
+            y_pred = np.append(y_pred, output)
+        if y is not None:
+            accuracy = np.sum(y_pred.astype(int) == y.astype(int)) / y.shape[0]
+        return accuracy
         
 
 x = np.array([[0.1, 0.2], [0.3, 0.4],[0.5,0.4],[0.5, 0.6], [0.7, 0.8]])
@@ -366,7 +370,10 @@ knn = kNN()
 knn.fit(x, y)
 knn.predict(x,y)"""
 
-net = NeuralNet()
+# helper.plot_data(x,y)
 
+
+net = NeuralNet()
 net.fit(x, y)
 print(net.predict(x,y))
+
